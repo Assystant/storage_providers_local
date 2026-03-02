@@ -2,6 +2,7 @@ import logging
 import os
 
 from django.core.files.storage import FileSystemStorage
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from storage_providers.base import BaseStorageProvider
 from storage_providers.exceptions import (StorageConnectionError,
                                           StorageDeleteError,
@@ -123,6 +124,27 @@ class LocalStorageProvider(BaseStorageProvider):
             raise StorageProviderError(
                 f"Failed to get size of '{name}' in local storage: {exc}"
             ) from exc
+
+    def generate_download_url(self, name: str, expires_in: int = 300) -> dict:
+        signer = TimestampSigner()
+        token = signer.sign(name)
+        base_url = self._fs.url(name)
+        url = f'{base_url}?token={token}'
+        logger.debug("Generated signed download URL for '%s' | expires_in=%s", name, expires_in)
+        return {'url': url, 'expires_in': expires_in}
+
+    def verify_download_token(self, token: str, max_age: int = 300) -> str:
+        signer = TimestampSigner()
+        try:
+            file_path = signer.unsign(token, max_age=max_age)
+            logger.debug("Verified download token | file_path='%s'", file_path)
+            return file_path
+        except SignatureExpired:
+            logger.warning('Download token expired | token=%s...', token[:20])
+            raise StorageProviderError('Download token has expired.')
+        except BadSignature:
+            logger.warning('Invalid download token | token=%s...', token[:20])
+            raise StorageProviderError('Invalid download token.')
 
     def upload_in_chunks(
         self,
