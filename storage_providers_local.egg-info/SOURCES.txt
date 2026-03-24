@@ -1,0 +1,9 @@
+pyproject.toml
+storage_providers_local/__init__.py
+storage_providers_local/apps.py
+storage_providers_local/provider.py
+storage_providers_local.egg-info/PKG-INFO
+storage_providers_local.egg-info/SOURCES.txt
+storage_providers_local.egg-info/dependency_links.txt
+storage_providers_local.egg-info/requires.txt
+storage_providers_local.egg-info/top_level.txt

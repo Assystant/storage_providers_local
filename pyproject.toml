@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "storage_providers_local"
+version = "0.1.0"
+description = "Local filesystem storage provider for Django"
+requires-python = ">=3.10"
+dependencies = [
+    "django>=4.0",
+    "storage_providers",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["storage_providers_local*"]

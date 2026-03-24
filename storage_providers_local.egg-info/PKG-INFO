@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: storage_providers_local
+Version: 0.1.0
+Summary: Local filesystem storage provider for Django
+Requires-Python: >=3.10
+Requires-Dist: django>=4.0
+Requires-Dist: storage_providers
