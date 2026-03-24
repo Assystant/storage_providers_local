@@ -47,7 +47,7 @@ class LocalStorageProvider(BaseStorageProvider):
 
     def _save(self, name: str, content) -> str:
         try:
-            saved_name = self._fs._save(name, content)
+            saved_name = self._fs._save(name, content)  # type: ignore[attr-defined]
             logger.debug("Saved '%s' → '%s' | local storage", name, saved_name)
             return saved_name
         except PermissionError as exc:
@@ -61,7 +61,7 @@ class LocalStorageProvider(BaseStorageProvider):
                 f"Failed to write '{name}' to local storage: {exc}"
             ) from exc
 
-    def download_file(self, name: str, mode: str = 'rb'):
+    def _open(self, name: str, mode: str = 'rb'):
         try:
             result = self._fs._open(name, mode)
             logger.debug("Opened '%s' (mode=%s) | local storage", name, mode)
@@ -81,6 +81,9 @@ class LocalStorageProvider(BaseStorageProvider):
             raise StorageDownloadError(
                 f"Failed to open '{name}' from local storage: {exc}"
             ) from exc
+
+    def download_file(self, name: str, mode: str = 'rb'):
+        return self._open(name, mode)
 
     def delete(self, name: str) -> None:
         try:
