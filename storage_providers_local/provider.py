@@ -63,7 +63,7 @@ class LocalStorageProvider(BaseStorageProvider):
 
     def _open(self, name: str, mode: str = 'rb'):
         try:
-            result = self._fs._open(name, mode)
+            result = self._fs._open(name, mode)  # type: ignore[attr-defined]
             logger.debug("Opened '%s' (mode=%s) | local storage", name, mode)
             return result
         except FileNotFoundError as exc:
